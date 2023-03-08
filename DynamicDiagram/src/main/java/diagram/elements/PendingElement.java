@@ -14,7 +14,7 @@ import diagram.elements.EntityElement.EntityShape;
 public class PendingElement extends Element {
 	Element father;
 	BiConsumer<Element,Element>f;
-	
+	Point connection;
 
 	public PendingElement(Point point) {
 		super(point);
@@ -23,6 +23,7 @@ public class PendingElement extends Element {
 
 	public void connect(Element e) {
 		f.accept(father, e);
+		//this.setConnection(e.getPos());
 	}
 	@Override
 	public void write(CodePanel panel) {
@@ -38,6 +39,9 @@ public class PendingElement extends Element {
 	@Override
 	public void draw(Graphics2D g2) {
 		this.shape.draw(g2);
+	}
+	public void setConnection(Point point) {
+		connection = point;
 	}
 
 	@Override
@@ -100,6 +104,18 @@ public class PendingElement extends Element {
 
 	public void setF(BiConsumer<Element, Element> f) {
 		this.f = f;
+	}
+
+	public Point getConnection() {
+		return connection;
+	}
+
+	public Element getFather() {
+		return father;
+	}
+
+	public void setFather(Element father) {
+		this.father = father;
 	}
 
 }

@@ -2,6 +2,7 @@ package diagram.elements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.List;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -36,6 +37,9 @@ public abstract class Element implements Cloneable{
 	public abstract void delete();
 	public void copy() {
 		this.clone();
+	}
+	public List<PendingElement> getPendingElements(){
+		return List.of();
 	}
 	public void move(Point point) {
 		this.setPos(new Point(pos.x+point.x, pos.y+point.y));

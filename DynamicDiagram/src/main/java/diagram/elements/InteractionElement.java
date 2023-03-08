@@ -2,11 +2,12 @@ package diagram.elements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONObject;
 
 import diagram.CodePanel;
-import diagram.elements.Element.Shape;
 
 public class InteractionElement extends Element {
 	private String id;
@@ -37,7 +38,7 @@ public class InteractionElement extends Element {
 		}
 		else {
 			Point l = shape.rightPoint();
-			Point r = from.shape.leftPoint();
+			Point r = to.shape.leftPoint();
 			g2.drawLine(l.x, l.y, r.x, r.y);
 		}
 	}
@@ -68,6 +69,12 @@ public class InteractionElement extends Element {
 	@Override
 	public void edit() {
 		// TODO Auto-generated method stub
+	}
+	public List<PendingElement> getPendingElements(){
+		List<PendingElement> l = new ArrayList<>();
+		if(from instanceof PendingElement)l.add((PendingElement) from);
+		if(to instanceof PendingElement)l.add((PendingElement) to);
+		return l;
 	}
 	protected class InteractionShape extends Shape{
 		int w,h;

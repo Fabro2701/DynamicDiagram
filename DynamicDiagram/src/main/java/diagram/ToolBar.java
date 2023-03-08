@@ -18,10 +18,12 @@ public class ToolBar extends JPanel{
 		e.setId(id);
 		
 		PendingElement pe = new PendingElement(e.getShape().leftPoint());
+		pe.setFather(e);
 		pe.setF((Element father, Element connection)->((InteractionElement)father).setFrom(connection));
 		e.setFrom(pe);
 		
 		pe = new PendingElement(e.getShape().rightPoint());
+		pe.setFather(e);
 		pe.setF((Element father, Element connection)->((InteractionElement)father).setTo(connection));
 		e.setTo(pe);
 		return e;
