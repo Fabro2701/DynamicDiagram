@@ -14,6 +14,7 @@ import diagram.elements.EntityElement.EntityShape;
 public class PendingElement extends Element {
 	Element father;
 	BiConsumer<Element,Element>f;
+	//Predicate filter //to filter elemnt to be connected
 	Point connection;
 
 	public PendingElement(Point point) {
@@ -21,6 +22,14 @@ public class PendingElement extends Element {
 		this.shape = new PendingShape(7, 7);
 	}
 
+	@Override
+	public JSONObject toJSON() {
+		return null;
+	}
+	@Override
+	public String fileName() {
+		return "pending";
+	}
 	public void connect(Element e) {
 		f.accept(father, e);
 		//this.setConnection(e.getPos());
@@ -30,11 +39,6 @@ public class PendingElement extends Element {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void load(JSONObject jo) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void draw(Graphics2D g2) {
@@ -92,18 +96,6 @@ public class PendingElement extends Element {
 		e.setFather(father);
 		e.setPos(new Point(pos));
 		return e;
-	}
-
-	@Override
-	public JSONObject toJSON() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void edit() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setF(BiConsumer<Element, Element> f) {

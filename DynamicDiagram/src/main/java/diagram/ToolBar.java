@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 
 import diagram.elements.Element;
 import diagram.elements.EntityElement;
+import diagram.elements.GlobalElement;
 import diagram.elements.GroupElement;
 import diagram.elements.InteractionElement;
 import diagram.elements.PendingElement;
@@ -46,8 +47,25 @@ public class ToolBar extends JPanel{
 	private void initElements() {
 		this.elements = new ArrayList<>();
 		this.initpositions = new HashMap<>();
+		int xshift = 80;
+		
 		Point p = new Point(50,50);
-		Element e = createInteraction("int", p);
+		Element e = createGlobal("global", p);
+		initpositions.put(e, p);
+		this.elements.add(e);
+		
+		p = new Point(50+xshift,50);
+		e = createEntity(EntityElement.class, p);
+		initpositions.put(e, p);
+		this.elements.add(e);
+		
+		p = new Point(50+xshift*2,50);
+		e = createGroup("att","value", p);
+		initpositions.put(e, p);
+		this.elements.add(e);
+		
+		p = new Point(50+xshift*3,50);
+		e = createInteraction("int", p);
 		initpositions.put(e, p);
 		this.elements.add(e);
 	}
@@ -80,13 +98,23 @@ public class ToolBar extends JPanel{
 	public static EntityElement createEntity(Class<?>clazz, Point point) {
 		EntityElement e = new EntityElement(point);
 		e.setClazz(clazz);
+		e.load();
 		return e;
 	}
 	public static GroupElement createGroup(String att, String value, Point point) {
 		GroupElement e = new GroupElement(point);
 		e.setAtt(att);
 		e.setValue(value);
-		e.setFather(new PendingElement(e.getShape().leftPoint()));
+		
+		PendingElement pe = new PendingElement(e.getShape().leftPoint());
+		pe.setFather(e);
+		pe.setF((Element father, Element connection)->((GroupElement)father).setFather(connection));
+		e.setFather(pe);
+		return e;
+	}
+	public static GlobalElement createGlobal(String id, Point point) {
+		GlobalElement e = new GlobalElement(point);
+		e.setId(id);
 		return e;
 	}
 	private class CustomMouse extends MouseAdapter{
@@ -110,7 +138,6 @@ public class ToolBar extends JPanel{
 				 Element s = null;
 				 if((s=e.contains(currentPoint))!=null) {
 					 currentElement = s;
-					 //System.out.println(2);
 					 break;
 				 }
 			 }

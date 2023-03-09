@@ -3,12 +3,13 @@ package diagram.elements;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONObject;
 
 import diagram.CodePanel;
-import diagram.elements.Element.Shape;
-import diagram.elements.EntityElement.EntityShape;
+import diagram.Diagram;
 
 public class GroupElement extends Element {
 	String att;
@@ -19,46 +20,84 @@ public class GroupElement extends Element {
 		this.shape = new GroupShape(25,25);
 	}
 	@Override
+	public String fileName() {
+		return att+value+father.fileName();
+	}
+	@Override
 	public void write(CodePanel panel) {
 		// TODO Auto-generated method stub
 
 	}
-
+	public static GroupElement fromJSON(Diagram diagram, JSONObject ob) {
+		JSONObject pos = ob.getJSONObject("pos");
+		GroupElement e = new GroupElement(new Point(pos.getInt("x"),pos.getInt("y")));
+		e.setDiagram(diagram);
+		e.setAtt(ob.getString("att"));
+		e.setValue(ob.getString("value"));
+		
+		if(ob.has("father")) {
+			e.setFather(diagram.findElement(ob.getString("father")));
+		}
+		else {
+			e.setFather(new PendingElement(e.getShape().leftPoint()));
+		}
+		return e;
+	}
 	@Override
-	public void load(JSONObject jo) {
-		// TODO Auto-generated method stub
-
+	public JSONObject toJSON() {
+		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
+							   .put("att", att)
+							   .put("value", value)
+							   .put("father", father instanceof PendingElement?null:father.fileName())
+							   .put("type", "Group");
 	}
 
 	@Override
 	public void draw(Graphics2D g2) {
 		shape.draw(g2);
 		if(father instanceof PendingElement)father.draw(g2);
+		else {
+			Point l = shape.leftPoint();
+			Point r = father.shape.rightPoint();
+			g2.drawLine(l.x, l.y, r.x, r.y);
+		}
 		g2.drawString(value, 
 				pos.x-g2.getFontMetrics().stringWidth(value)/2, 
 				pos.y+g2.getFontMetrics().getHeight()/4);
 	}
-
+	@Override
+	public List<PendingElement> getPendingElements(){
+		List<PendingElement> l = new ArrayList<>();
+		if(father instanceof PendingElement)l.add((PendingElement) father);
+		return l;
+	}
+	@Override
+	public Element contains(Point point) {
+		if(father instanceof PendingElement && father.contains(point)!=null) {
+			System.out.println("ee");
+			return father;
+		}
+		else return this.shape.contains(point)?this:null;
+	}
 	@Override
 	public void delete() {
 		// TODO Auto-generated method stub
 
 	}
+
 	@Override
 	public Object clone() {
 		GroupElement e = new GroupElement(this.pos);
 		e.setAtt(att);
 		e.setValue(value);
-		e.setFather(father);
+		PendingElement pe = new PendingElement(e.getShape().leftPoint());
+		pe.setFather(e);
+		pe.setF((Element father, Element connection)->((GroupElement)father).setFather(connection));
+		e.setFather(pe);
 		e.setPos(pos);
 		return e;
 	}
 
-	@Override
-	public void edit() {
-		// TODO Auto-generated method stub
-		
-	}
 	protected class GroupShape extends Shape{
 		int w,h;
 		private Polygon p;
@@ -109,18 +148,7 @@ public class GroupElement extends Element {
 			father.setPos(shape.leftPoint());
 		}
 	}
-	@Override
-	public Element contains(Point point) {
-		if(father instanceof PendingElement && father.contains(point)!=null) {
-			return father;
-		}
-		else return this.shape.contains(point)?this:null;
-	}
-	@Override
-	public JSONObject toJSON() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 	public String getAtt() {
 		return att;
 	}

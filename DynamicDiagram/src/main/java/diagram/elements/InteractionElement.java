@@ -8,6 +8,8 @@ import java.util.List;
 import org.json.JSONObject;
 
 import diagram.CodePanel;
+import diagram.Diagram;
+import setup.gui.block.BlockConstructionLauncher;
 
 public class InteractionElement extends Element {
 	private String id;
@@ -15,9 +17,41 @@ public class InteractionElement extends Element {
 	public InteractionElement(Point point) {
 		super(point);
 		this.shape = new InteractionShape(50,50);
+		this.blockLauncher = new BlockConstructionLauncher("resources/interact.sklt");
 	}
 
-
+	@Override
+	public String fileName() {
+		return from.fileName()+id+to.fileName();
+	}
+	public static InteractionElement fromJSON(Diagram diagram, JSONObject ob) {
+		JSONObject pos = ob.getJSONObject("pos");
+		InteractionElement e = new InteractionElement(new Point(pos.getInt("x"),pos.getInt("y")));
+		e.setDiagram(diagram);
+		e.setId(ob.getString("id"));
+		
+		if(ob.has("from")) {
+			e.setFrom(diagram.findElement(ob.getString("from")));
+		}
+		else {
+			e.setFrom(new PendingElement(e.getShape().leftPoint()));
+		}
+		if(ob.has("to")) {
+			e.setTo(diagram.findElement(ob.getString("to")));
+		}
+		else {
+			e.setTo(new PendingElement(e.getShape().rightPoint()));
+		}
+		return e;
+	}
+	@Override
+	public JSONObject toJSON() {
+		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
+							   .put("id", id)
+							   .put("from", from instanceof PendingElement?null:from.fileName())
+							   .put("to", to instanceof PendingElement?null:to.fileName())
+							   .put("type", "Interaction");
+	}
 	@Override
 	public void draw(Graphics2D g2) {
 		shape.draw(g2);
@@ -67,9 +101,6 @@ public class InteractionElement extends Element {
 		// TODO Auto-generated method stub
 	}
 	@Override
-	public void edit() {
-		// TODO Auto-generated method stub
-	}
 	public List<PendingElement> getPendingElements(){
 		List<PendingElement> l = new ArrayList<>();
 		if(from instanceof PendingElement)l.add((PendingElement) from);
@@ -113,8 +144,17 @@ public class InteractionElement extends Element {
 	public Object clone() {
 		InteractionElement e = new InteractionElement(this.pos);
 		e.setId(id);
-		e.setFrom((Element)from.clone());
-		e.setTo((Element)to.clone());
+		
+		PendingElement pe = new PendingElement(e.getShape().leftPoint());
+		pe.setFather(e);
+		pe.setF((Element father, Element connection)->((InteractionElement)father).setFrom(connection));
+		e.setFrom(pe);
+		
+		pe = new PendingElement(e.getShape().rightPoint());
+		pe.setFather(e);
+		pe.setF((Element father, Element connection)->((InteractionElement)father).setTo(connection));
+		e.setTo(pe);
+		
 		e.setPos(new Point(pos));
 		return e;
 	}
@@ -123,18 +163,6 @@ public class InteractionElement extends Element {
 	public void write(CodePanel panel) {
 		panel.insertString(this.id+'\n');
 	}
-
-	@Override
-	public void load(JSONObject jo) {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
-	public JSONObject toJSON() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String getId() {
 		return id;
 	}

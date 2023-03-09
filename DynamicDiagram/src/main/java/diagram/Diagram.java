@@ -9,19 +9,31 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import diagram.elements.Element;
 import diagram.elements.EntityElement;
+import diagram.elements.GlobalElement;
+import diagram.elements.GroupElement;
+import diagram.elements.InteractionElement;
 import diagram.elements.PendingElement;
+import simulator.model.entity.individuals.MyIndividual;
 
 public class Diagram extends JPanel{
 	 private ToolBar toolBar;
@@ -34,9 +46,11 @@ public class Diagram extends JPanel{
 		 this.toolBar = toolBar;
 		 toolBar.setDiagram(this);
 		 this.codePanel = codePanel;
-		 this.insertElement(ToolBar.createInteraction("int1", new Point(50,50)));
-		 this.insertElement(ToolBar.createEntity(EntityElement.class, new Point(100,50)));
-		 this.insertElement(ToolBar.createEntity(EntityElement.class, new Point(250,100)));
+		 //this.insertElement(ToolBar.createInteraction("int1", new Point(50,50)));
+		 //this.insertElement(ToolBar.createEntity(MyIndividual.class, new Point(100,50)));
+		 //this.insertElement(ToolBar.createGroup("imc","O", new Point(150,50)));
+		 //this.insertElement(ToolBar.createEntity(PasiveEntity.class, new Point(250,100)));
+		 //this.insertElement(ToolBar.createEGlobal("global1", new Point(250,200)));
 
 		 mouse = new CustomMouse();
 		 this.addMouseListener(mouse);
@@ -173,6 +187,55 @@ public class Diagram extends JPanel{
 			 }
 		 }
 	 }
+	public Element findElement(String name) {
+		for(Element e:elements)if(e.fileName().equals(name))return e;
+		System.err.println(name+" elem not found");
+		return null;
+	}
+	public void load(String filename) {
+		this.elements = new ArrayList<>();
+		JSONArray arr = null;
+		try {
+			arr = new JSONArray(new JSONTokener(new FileInputStream(filename)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}catch (JSONException e) {
+			e.printStackTrace();
+		}
+		for(int i=0;i<arr.length();i++) {
+			JSONObject ob = arr.getJSONObject(i);
+			Element e = null;
+			String type = ob.getString("type");
+			switch(type) {
+			case "Entity":
+				e = EntityElement.fromJSON(this, ob);
+				break;
+			case "Global":
+				e = GlobalElement.fromJSON(this, ob);
+				break;
+			case "Group":
+				e = GroupElement.fromJSON(this, ob);
+				break;
+			case "Interaction":
+				e = InteractionElement.fromJSON(this, ob);
+				break;
+			}
+			elements.add(e);
+		}
+		this.repaint();
+	}
+	public void save(String filename) {
+		JSONArray arr = new JSONArray();
+		for(Element e:this.elements)if(e instanceof EntityElement)arr.put(e.toJSON());
+		for(Element e:this.elements)if(!(e instanceof EntityElement))arr.put(e.toJSON());
+		try {
+	         FileWriter file = new FileWriter(filename);
+	         file.write(arr.toString(4));
+	         file.close();
+	      } catch (IOException e) {
+	         e.printStackTrace();
+	      }
+	}
 	 public static void main(String args[]) {
 		 SwingUtilities.invokeLater(()->{
 			 JFrame frame = new JFrame();
@@ -189,6 +252,16 @@ public class Diagram extends JPanel{
 			 dpanel.add(toolBar);
 			 Diagram d = new Diagram(toolBar, codep);
 			 dpanel.add(d);
+			 
+			 JPanel bpanel = new JPanel();
+			 bpanel.setLayout(new BoxLayout(bpanel, BoxLayout.X_AXIS));
+			 JButton b = new JButton("save");
+			 b.addActionListener((a)->d.save("resources/"+Element.directory+"elements.json"));
+			 JButton b2 = new JButton("load");
+			 b2.addActionListener((a)->d.load("resources/"+Element.directory+"elements.json"));
+			 bpanel.add(b2);bpanel.add(b);
+			 
+			 dpanel.add(bpanel);
 			 
 			 panel.add(dpanel);
 			 

@@ -4,55 +4,49 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import diagram.CodePanel;
 import diagram.Diagram;
 import setup.gui.block.BlockConstructionLauncher;
  
-public class EntityElement extends Element {
+public class GlobalElement extends Element {
 
-	Class<?> clazz;
-	public EntityElement(Point point) {
+	String id;
+	public GlobalElement(Point point) {
 		super(point);
 		this.shape = new EntityShape(25,25);
-		this.blockLauncher = new BlockConstructionLauncher("resources/interact.sklt");
+		this.blockLauncher = new BlockConstructionLauncher("resources/global.sklt");
 	}
 	@Override
 	public String fileName() {
-		return clazz.getSimpleName();
+		return "Global"+id;
 	}
 	
 	@Override
 	public void write(CodePanel panel) {
-		panel.insertString(clazz.getName()+'\n');
+		panel.insertString("");
 	}
 
-
-	public static EntityElement fromJSON(Diagram diagram, JSONObject ob) {
+	public static GlobalElement fromJSON(Diagram diagram, JSONObject ob) {
 		JSONObject pos = ob.getJSONObject("pos");
-		EntityElement e = new EntityElement(new Point(pos.getInt("x"),pos.getInt("y")));
+		GlobalElement e = new GlobalElement(new Point(pos.getInt("x"),pos.getInt("y")));
 		e.setDiagram(diagram);
-		try {
-			e.setClazz(Class.forName(ob.getString("clazz")));
-		} catch (ClassNotFoundException | JSONException e1) {
-			e1.printStackTrace();
-		}
+		e.setId(ob.getString("id"));
 		return e;
 	}
+
 	@Override
 	public JSONObject toJSON() {
 		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
-							   .put("clazz", clazz.getName())
-							   .put("type", "Entity");
+							   .put("id", id)
+							   .put("type", "Global");
 	}
-	
 	@Override
 	public void draw(Graphics2D g2) {
 		shape.draw(g2);
-		g2.drawString(clazz.getSimpleName(), 
-				pos.x-g2.getFontMetrics().stringWidth(clazz.getSimpleName())/2, 
+		g2.drawString(id, 
+				pos.x-g2.getFontMetrics().stringWidth(id)/2, 
 				pos.y+g2.getFontMetrics().getHeight()/4);
 	}
 
@@ -105,17 +99,17 @@ public class EntityElement extends Element {
 	}
 	@Override
 	public Object clone() {
-		EntityElement e = new EntityElement(this.pos);
-		e.setClazz(this.clazz);
+		GlobalElement e = new GlobalElement(this.pos);
+		e.setId(id);
 		e.setPos(pos);
 		return e;
 	}
 
-	public Class<?> getClazz() {
-		return clazz;
+	public String getId() {
+		return id;
 	}
-	public void setClazz(Class<?> clazz) {
-		this.clazz = clazz;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

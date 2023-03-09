@@ -1,0 +1,67 @@
+<FSM_DEF>:- [
+			  Header(name=Str(text="Def FSM"),right=<NAME>),
+			  Children(e=<STATE_DEFLIST>),
+		 	  Floor(),
+			  Children(e=<TRANSITION_DEFLIST>),
+		 	  Floor(),
+		 	  Header(name=Str(text="init "),right=<NAME>)
+			 ].
+<STATE_DEFLIST>:-[Children(e=<STATE_DEF>,e=<STATE_DEFLIST>)],
+			     [Children(e=<STATE_DEF>), Floor()].
+<STATE_DEF>:-[
+			  Header(name=Str(text="Def state"),right=<NAME>),
+			  Children(e=<ACTIONLIST>),
+		 	  Floor()
+			 ].
+<ACTIONLIST>:-[Children(e=<ACTION>,e=<ACTIONLIST>)],
+			  [Children(e=<ACTION>), Floor()].
+<ACTION>:-[Input(text="this.setAttribute(,);")].
+<TRANSITION_DEFLIST>:-[Children(e=<TRANSITION_DEF>,e=<TRANSITION_DEFLIST>)],
+			     		[Children(e=<TRANSITION_DEF>), Floor()].
+<TRANSITION_DEF>:-[
+		 Header(name=Str(text="Def Transition"),right=<STATE>,right=Str(text=" to "),right=<STATE>),
+		 Children(e=<TRANSITION_TYPE>),
+		 Floor()
+		].
+<TRANSITION_TYPE>:- 
+		  [<TRUE_T>],
+		  [<PROB_T>],
+		  [<COND_T>],
+		  [<COMP_T>],
+		  [<SCOMP_T>].
+<STATE>:-[Header(name=Str(text="name"),right=<NAME>)].
+<COMP_T> :- [
+ 		   Header(name=Str(text="equals:"),right=<NAME>)
+		  ].
+<SCOMP_T> :- [
+ 		   Header(name=Str(text="equals:"),right=<NAME>,right=<NUM>)
+		  ].
+<TRUE_T> :- [
+ 		   Inner(names=Str(text="true"))
+		  ].
+<PROB_T> :- [
+   Header(name=Str(text="prob"),right=<NUM>)
+	].
+<COND_T> :- [
+   			Inner(names=<NUM>,names=<OP>,names=<NUM>)
+			],
+			[
+   			Inner(names=<COND_T>,names=<OP>,names=<NUM>)
+			],
+			[
+   			Inner(names=<NUM>,names=<OP>,names=<COND_T>)
+			],
+			[
+   			Inner(names=<COND_T>,names=<OP>,names=<COND_T>)
+			].
+
+<NAME>:-[Input(text="name")].
+<NUM>:- [Input(text="num")],[Input(text="rndint(1)")],[Input(text="rndfloat()")].
+<OP>:-  [Str(text=">")],
+		[Str(text=">=")],
+		[Str(text="<")],
+		[Str(text="<=")],
+		[Str(text="==")],
+		[Str(text="!=")].
+
+

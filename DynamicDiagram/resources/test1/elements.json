@@ -1,0 +1,47 @@
+[
+    {
+        "pos": {
+            "x": 367,
+            "y": 200
+        },
+        "type": "Entity",
+        "clazz": "diagram.elements.EntityElement"
+    },
+    {
+        "pos": {
+            "x": 367,
+            "y": 82
+        },
+        "type": "Entity",
+        "clazz": "diagram.elements.EntityElement"
+    },
+    {
+        "att": "att",
+        "pos": {
+            "x": 592,
+            "y": 225
+        },
+        "father": "EntityElement",
+        "type": "Group",
+        "value": "value"
+    },
+    {
+        "att": "att",
+        "pos": {
+            "x": 202,
+            "y": 0
+        },
+        "type": "Group",
+        "value": "value"
+    },
+    {
+        "pos": {
+            "x": 502,
+            "y": 126
+        },
+        "from": "EntityElement",
+        "id": "int",
+        "to": "EntityElement",
+        "type": "Interaction"
+    }
+]

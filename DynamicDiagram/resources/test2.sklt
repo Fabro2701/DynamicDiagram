@@ -1,0 +1,30 @@
+<LINE> :- [
+		   Header(name=Str(text="line")),
+		   Children(e=Header(name=Str(text="return "),right=<ACTION>)),
+ 		   Floor()
+		  ].
+<IF> :- [
+		 Header(name=Str(text="if"),right=<OBS>,right=<OBS>),
+		 Children(e=<LINE>),
+		 Floor()
+		],
+		[
+		 Header(name=Str(text="if")right=<COND>),
+		 Children(e=<LINE>),
+		 Floor()
+		].
+<COND> :- [
+		   Inner(names=<OBS>,names=<OP>,names=<OBS>)
+		  ],
+		  [
+		   Inner(names=<COND>,names=<OP>,names=<COND>)
+		  ].
+<OBS> :- [Inner(names=Str(text="ae"))],
+		 [Inner(names=Str(text="obs2"))].
+<ACTION> :- 
+			[Inner(names=Header(name=Str(text="return "),right=<ACTION>))],
+			[Inner(names=Str(text="RIGHT"))].
+<OP> :- [Inner(names=Str(text="<"))],
+		[Inner(names=Str(text=">"))],
+		[Inner(names=Str(text="<="))],
+		[Inner(names=Str(text=">="))].

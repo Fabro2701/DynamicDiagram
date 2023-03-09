@@ -1,0 +1,54 @@
+<CODE> :- [
+		   Header(name=Str(text="code")),
+		   Children(e=<LINE>),
+		   Floor()
+		  ],
+		  [
+		   Header(name=Str(text="code")),
+		   Children(e=<CODE>),
+		   Children(e=<LINE>),
+		   Floor()
+		  ].
+<LINE> :- [
+ 		   Header(name=Str(text="line")),
+ 		   Children(e=<IF>),
+ 		   Floor()
+		  ],
+		  [
+		   Header(name=Str(text="line"))
+		   Children(e=Header(name=Str(text="return "),right=<ACTION>)),
+ 		   Floor()
+		  ].
+<IF> :- [
+		 Header(name=Str(text="if"),right=<COND>,right=<COND>),
+		 Children(e=<LINE>),
+		 Floor()
+		],
+		[
+		 Header(name=Str(text="if"),right=<COND>),
+		 Children(e=<LINE>),
+		 Header(name=Str(text="else"),right=<COND>),
+		 Children(e=<LINE>),
+		 Floor(),
+		].
+<COND> :- [
+		   Inner(names=<OBS>,names=<OP>,names=<OBS>)
+		  ],
+		  [
+		   Inner(names=<COND>,names=<OP>,names=<OBS>)
+		  ],
+		  [
+		   Inner(names=<OBS>,names=<OP>,names=<COND>)
+		  ].
+<OBS> :- [Inner(names=Str(text="ae"))],
+		 [Inner(names=Str(text="obs2"))],
+		 [Inner(names=Str(text="qqqqqqq"))].
+<ACTION> :- [Inner(names=Str(text="RIGHT"))],
+			[Inner(names=Str(text="LEFT"))],
+			[Inner(names=Str(text="UP"))],
+			[Inner(names=Str(text="DOWN"))],
+			[Inner(names=Str(text="NEUTRAL"))].
+<OP> :- [Inner(names=Str(text="<"))],
+		[Inner(names=Str(text=">"))],
+		[Inner(names=Str(text="<="))],
+		[Inner(names=Str(text=">="))].

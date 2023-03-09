@@ -1,0 +1,41 @@
+[{
+    "init": "INTERACTION",
+    "filename": "resources/interact.sklt",
+    "inputs": [],
+    "root": {
+        "blocks": [
+            {
+                "name": {
+                    "text": "Interaction def",
+                    "type": "StrBlock"
+                },
+                "right": [{
+                    "blocks": [{"type": "GhostBlock"}],
+                    "rule": "NAME",
+                    "type": "RecursiveBlock"
+                }],
+                "type": "HeaderBlock"
+            },
+            {
+                "children": [{
+                    "blocks": [{"type": "GhostBlock"}],
+                    "rule": "CODE",
+                    "type": "RecursiveBlock"
+                }],
+                "type": "ChildrenBlock"
+            },
+            {"type": "FloorBlock"}
+        ],
+        "rule": "INTERACTION",
+        "type": "RecursiveBlock"
+    },
+    "decisions": [
+        0,
+        -1,
+        -1
+    ],
+    "base": {
+        "x": 638,
+        "y": 209
+    }
+}]

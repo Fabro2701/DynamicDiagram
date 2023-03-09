@@ -1,0 +1,9 @@
+<GLOBAL_DEF> :- [
+ 		   Header(name=Str(text="Global variables def")),
+ 		   Children(e=<DECLARATION>),
+ 		   Floor()
+		  ].
+<DECLARATION> :- [
+ 		   Inner(names=<CODE>)
+		  ].
+<CODE> :- [Input(text="code")].
