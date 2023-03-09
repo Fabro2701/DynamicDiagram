@@ -8,7 +8,7 @@ import java.util.Arrays;
 import org.json.JSONObject;
 
 import diagram.CodePanel;
-
+ 
 public class EntityElement extends Element {
 
 	Class<?> clazz;
@@ -18,7 +18,7 @@ public class EntityElement extends Element {
 	}
 	@Override
 	public void write(CodePanel panel) {
-		// TODO Auto-generated method stub
+		panel.insertString(clazz.getName()+'\n');
 	}
 	@Override
 	public void load(JSONObject jo) {

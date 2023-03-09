@@ -86,8 +86,12 @@ public class PendingElement extends Element {
 	}
 	@Override
 	public Object clone() {
-		System.err.println("PendingElement clonation not allowed");
-		return null;
+		PendingElement e = new PendingElement(pos);
+		e.setF(f);
+		e.setConnection(connection);
+		e.setFather(father);
+		e.setPos(new Point(pos));
+		return e;
 	}
 
 	@Override

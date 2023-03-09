@@ -113,16 +113,15 @@ public class InteractionElement extends Element {
 	public Object clone() {
 		InteractionElement e = new InteractionElement(this.pos);
 		e.setId(id);
-		e.setFrom(from);
-		e.setTo(to);
-		e.setPos(pos);
+		e.setFrom((Element)from.clone());
+		e.setTo((Element)to.clone());
+		e.setPos(new Point(pos));
 		return e;
 	}
 
 	@Override
 	public void write(CodePanel panel) {
-		// TODO Auto-generated method stub
-
+		panel.insertString(this.id+'\n');
 	}
 
 	@Override

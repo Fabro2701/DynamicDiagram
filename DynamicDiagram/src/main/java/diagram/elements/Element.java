@@ -21,6 +21,8 @@ public abstract class Element implements Cloneable{
 	JMenuItem copyMenu;
 	JMenuItem deleteMenu;
 	
+	//BlockConstructionLauncher blockLauncher;
+	
 	public Element(Point point) {
 		this.pos = point;
 		this.editMenu = new JMenuItem("edit");
