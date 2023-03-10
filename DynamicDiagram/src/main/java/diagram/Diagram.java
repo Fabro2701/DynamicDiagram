@@ -1,5 +1,6 @@
 package diagram;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -15,6 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -33,7 +36,6 @@ import diagram.elements.GlobalElement;
 import diagram.elements.GroupElement;
 import diagram.elements.InteractionElement;
 import diagram.elements.PendingElement;
-import simulator.model.entity.individuals.MyIndividual;
 
 public class Diagram extends JPanel{
 	 private ToolBar toolBar;
@@ -63,6 +65,7 @@ public class Diagram extends JPanel{
 		 g2.setColor(new Color(240,240,240));
 		 g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		 g2.setColor(Color.black);
+		 g2.setStroke(new BasicStroke(3));
 		 for(Element e:elements) {
 			 e.draw(g2);
 			 for(PendingElement pe:e.getPendingElements()) {
@@ -209,15 +212,19 @@ public class Diagram extends JPanel{
 			switch(type) {
 			case "Entity":
 				e = EntityElement.fromJSON(this, ob);
+				e.load();
 				break;
 			case "Global":
 				e = GlobalElement.fromJSON(this, ob);
+				e.load();
 				break;
 			case "Group":
 				e = GroupElement.fromJSON(this, ob);
+				e.load();
 				break;
 			case "Interaction":
 				e = InteractionElement.fromJSON(this, ob);
+				e.load();
 				break;
 			}
 			elements.add(e);
@@ -226,8 +233,11 @@ public class Diagram extends JPanel{
 	}
 	public void save(String filename) {
 		JSONArray arr = new JSONArray();
-		for(Element e:this.elements)if(e instanceof EntityElement)arr.put(e.toJSON());
-		for(Element e:this.elements)if(!(e instanceof EntityElement))arr.put(e.toJSON());
+		Map<Object, List<Element>> gs = this.elements.stream().collect(Collectors.groupingBy(e->e.getClass()));
+		if(gs.containsKey(EntityElement.class))for(Element e:gs.get(EntityElement.class))arr.put(e.toJSON());
+		if(gs.containsKey(GroupElement.class))for(Element e:gs.get(GroupElement.class))arr.put(e.toJSON());
+		if(gs.containsKey(InteractionElement.class))for(Element e:gs.get(InteractionElement.class))arr.put(e.toJSON());
+		if(gs.containsKey(GlobalElement.class))for(Element e:gs.get(GlobalElement.class))arr.put(e.toJSON());
 		try {
 	         FileWriter file = new FileWriter(filename);
 	         file.write(arr.toString(4));

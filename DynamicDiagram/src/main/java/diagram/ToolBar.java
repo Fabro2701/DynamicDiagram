@@ -84,21 +84,14 @@ public class ToolBar extends JPanel{
 		InteractionElement e = new InteractionElement(point);
 		e.setId(id);
 		
-		PendingElement pe = new PendingElement(e.getShape().leftPoint());
-		pe.setFather(e);
-		pe.setF((Element father, Element connection)->((InteractionElement)father).setFrom(connection));
-		e.setFrom(pe);
-		
-		pe = new PendingElement(e.getShape().rightPoint());
-		pe.setFather(e);
-		pe.setF((Element father, Element connection)->((InteractionElement)father).setTo(connection));
-		e.setTo(pe);
+		e.setFrom(e.createPendingFromChild());
+
+		e.setTo(e.createPendingToChild());
 		return e;
 	}
 	public static EntityElement createEntity(Class<?>clazz, Point point) {
 		EntityElement e = new EntityElement(point);
 		e.setClazz(clazz);
-		e.load();
 		return e;
 	}
 	public static GroupElement createGroup(String att, String value, Point point) {
@@ -106,10 +99,7 @@ public class ToolBar extends JPanel{
 		e.setAtt(att);
 		e.setValue(value);
 		
-		PendingElement pe = new PendingElement(e.getShape().leftPoint());
-		pe.setFather(e);
-		pe.setF((Element father, Element connection)->((GroupElement)father).setFather(connection));
-		e.setFather(pe);
+		e.setFather(e.createPendingChild());
 		return e;
 	}
 	public static GlobalElement createGlobal(String id, Point point) {

@@ -35,6 +35,7 @@ public abstract class Element implements Cloneable{
 	JMenuItem editMenu;
 	JMenuItem copyMenu;
 	JMenuItem deleteMenu;
+	JMenuItem propertiesMenu;
 	
 	BlockConstructionLauncher blockLauncher;
 	
@@ -46,7 +47,10 @@ public abstract class Element implements Cloneable{
 		this.copyMenu.addActionListener((a)->{Element.this.copy();});
 		this.deleteMenu = new JMenuItem("delete");
 		this.deleteMenu.addActionListener((a)->{Element.this.delete();});
+		this.propertiesMenu = new JMenuItem("properties");
+		this.propertiesMenu.addActionListener((a)->{Element.this.properties();});
 	}
+	protected abstract void properties();
 	public abstract void write(CodePanel panel);
 	public final void load() {
 		String filename = "resources/"+this.fileName()+".json";
@@ -103,6 +107,7 @@ public abstract class Element implements Cloneable{
 		pm.add(editMenu);
 		pm.add(copyMenu);
 		pm.add(deleteMenu);
+		pm.add(propertiesMenu);
 		pm.show(diagram, point.x, point.y);
 	}
 	public abstract JSONObject toJSON();

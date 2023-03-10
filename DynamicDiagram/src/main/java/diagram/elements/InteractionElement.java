@@ -1,9 +1,17 @@
 package diagram.elements;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.json.JSONObject;
 
@@ -34,13 +42,13 @@ public class InteractionElement extends Element {
 			e.setFrom(diagram.findElement(ob.getString("from")));
 		}
 		else {
-			e.setFrom(new PendingElement(e.getShape().leftPoint()));
+			e.setFrom(e.createPendingFromChild());
 		}
 		if(ob.has("to")) {
 			e.setTo(diagram.findElement(ob.getString("to")));
 		}
 		else {
-			e.setTo(new PendingElement(e.getShape().rightPoint()));
+			e.setTo(e.createPendingToChild());
 		}
 		return e;
 	}
@@ -97,6 +105,49 @@ public class InteractionElement extends Element {
 		}
 	}
 	@Override
+	protected void properties() {
+		JDialog dialog = new JDialog();
+		JPanel panel = new JPanel();
+		dialog.setContentPane(panel);
+		panel.setLayout(new BorderLayout());
+		JPanel proppanel = new JPanel();
+		proppanel.setLayout(new GridLayout(0,2));
+		JLabel l = new JLabel("id");
+		JTextField t = new JTextField(this.id);
+		proppanel.add(l);proppanel.add(t);
+		l = new JLabel("from");
+		JTextField t2 = new JTextField(this.from instanceof PendingElement?"":this.from.fileName());
+		proppanel.add(l);proppanel.add(t2);
+		l = new JLabel("to");
+		JTextField t3 = new JTextField(this.to instanceof PendingElement?"":this.to.fileName());
+		proppanel.add(l);proppanel.add(t3);
+		panel.add(proppanel, BorderLayout.CENTER);
+		JButton saveb = new JButton("save");
+		saveb.addActionListener(a->{
+			this.setId(t.getText());
+			if(t2.getText().equals(""))this.setFrom(this.createPendingFromChild());
+			else {
+				Element e = null;
+				if((e=diagram.findElement(t3.getText()))!=null) {
+					this.setFrom(diagram.findElement(t2.getText()));
+				}
+			}
+			if(t3.getText().equals(""))this.setTo(this.createPendingToChild());
+			else {
+				Element e = null;
+				if((e=diagram.findElement(t3.getText()))!=null) {
+					this.setTo(diagram.findElement(t3.getText()));
+				}
+			}
+			dialog.setVisible(false);
+			diagram.repaint();
+		});
+		panel.add(saveb, BorderLayout.PAGE_END);
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
+	}
+	@Override
 	public void delete() {
 		// TODO Auto-generated method stub
 	}
@@ -145,20 +196,25 @@ public class InteractionElement extends Element {
 		InteractionElement e = new InteractionElement(this.pos);
 		e.setId(id);
 		
-		PendingElement pe = new PendingElement(e.getShape().leftPoint());
-		pe.setFather(e);
-		pe.setF((Element father, Element connection)->((InteractionElement)father).setFrom(connection));
-		e.setFrom(pe);
+		e.setFrom(e.createPendingFromChild());
 		
-		pe = new PendingElement(e.getShape().rightPoint());
-		pe.setFather(e);
-		pe.setF((Element father, Element connection)->((InteractionElement)father).setTo(connection));
-		e.setTo(pe);
+		e.setTo(e.createPendingToChild());
 		
 		e.setPos(new Point(pos));
 		return e;
 	}
-
+	public PendingElement createPendingFromChild() {
+		PendingElement pe = new PendingElement(this.getShape().leftPoint());
+		pe.setFather(this);
+		pe.setF((Element father, Element connection)->((InteractionElement)father).setFrom(connection));
+		return pe;
+	}
+	public PendingElement createPendingToChild() {
+		PendingElement pe = new PendingElement(this.getShape().rightPoint());
+		pe.setFather(this);
+		pe.setF((Element father, Element connection)->((InteractionElement)father).setTo(connection));
+		return pe;
+	}
 	@Override
 	public void write(CodePanel panel) {
 		panel.insertString(this.id+'\n');

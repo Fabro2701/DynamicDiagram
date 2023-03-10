@@ -1,8 +1,16 @@
 package diagram.elements;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Polygon;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.json.JSONObject;
 
@@ -41,6 +49,29 @@ public class GlobalElement extends Element {
 		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
 							   .put("id", id)
 							   .put("type", "Global");
+	}
+	@Override
+	protected void properties() {
+		JDialog dialog = new JDialog();
+		JPanel panel = new JPanel();
+		dialog.setContentPane(panel);
+		panel.setLayout(new BorderLayout());
+		JPanel proppanel = new JPanel();
+		proppanel.setLayout(new GridLayout(0,2));
+		JLabel l = new JLabel("id");
+		JTextField t = new JTextField(this.getId());
+		proppanel.add(l);proppanel.add(t);
+		panel.add(proppanel, BorderLayout.CENTER);
+		JButton saveb = new JButton("save");
+		saveb.addActionListener(a->{
+			this.setId(t.getText());
+			dialog.setVisible(false);
+			diagram.repaint();
+		});
+		panel.add(saveb, BorderLayout.PAGE_END);
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
 	}
 	@Override
 	public void draw(Graphics2D g2) {

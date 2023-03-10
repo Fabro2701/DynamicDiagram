@@ -1,10 +1,18 @@
 package diagram.elements;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.json.JSONObject;
 
@@ -39,9 +47,46 @@ public class GroupElement extends Element {
 			e.setFather(diagram.findElement(ob.getString("father")));
 		}
 		else {
-			e.setFather(new PendingElement(e.getShape().leftPoint()));
+			e.setFather(e.createPendingChild());
 		}
 		return e;
+	}
+	@Override
+	protected void properties() {
+		JDialog dialog = new JDialog();
+		JPanel panel = new JPanel();
+		dialog.setContentPane(panel);
+		panel.setLayout(new BorderLayout());
+		JPanel proppanel = new JPanel();
+		proppanel.setLayout(new GridLayout(0,2));
+		JLabel l = new JLabel("att");
+		JTextField t = new JTextField(this.att);
+		proppanel.add(l);proppanel.add(t);
+		l = new JLabel("value");
+		JTextField t2 = new JTextField(this.value);
+		proppanel.add(l);proppanel.add(t2);
+		l = new JLabel("to");
+		JTextField t3 = new JTextField(this.father instanceof PendingElement?"":this.father.fileName());
+		proppanel.add(l);proppanel.add(t3);
+		panel.add(proppanel, BorderLayout.CENTER);
+		JButton saveb = new JButton("save");
+		saveb.addActionListener(a->{
+			this.setAtt(t.getText());
+			this.setAtt(t2.getText());
+			if(t3.getText().equals(""))this.setFather(this.createPendingChild());
+			else {
+				Element e = null;
+				if((e=diagram.findElement(t3.getText()))!=null) {
+					this.setFather(diagram.findElement(t3.getText()));
+				}
+			}
+			dialog.setVisible(false);
+			diagram.repaint();
+		});
+		panel.add(saveb, BorderLayout.PAGE_END);
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
 	}
 	@Override
 	public JSONObject toJSON() {
@@ -51,7 +96,12 @@ public class GroupElement extends Element {
 							   .put("father", father instanceof PendingElement?null:father.fileName())
 							   .put("type", "Group");
 	}
-
+	public PendingElement createPendingChild() {
+		PendingElement pe = new PendingElement(this.getShape().leftPoint());
+		pe.setFather(this);
+		pe.setF((Element father, Element connection)->((GroupElement)father).setFather(connection));
+		return pe;
+	}
 	@Override
 	public void draw(Graphics2D g2) {
 		shape.draw(g2);
@@ -90,10 +140,7 @@ public class GroupElement extends Element {
 		GroupElement e = new GroupElement(this.pos);
 		e.setAtt(att);
 		e.setValue(value);
-		PendingElement pe = new PendingElement(e.getShape().leftPoint());
-		pe.setFather(e);
-		pe.setF((Element father, Element connection)->((GroupElement)father).setFather(connection));
-		e.setFather(pe);
+		e.setFather(e.createPendingChild());
 		e.setPos(pos);
 		return e;
 	}

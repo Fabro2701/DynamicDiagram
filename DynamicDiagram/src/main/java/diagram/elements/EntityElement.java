@@ -1,8 +1,16 @@
 package diagram.elements;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Polygon;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +55,34 @@ public class EntityElement extends Element {
 							   .put("clazz", clazz.getName())
 							   .put("type", "Entity");
 	}
-	
+	@Override
+	protected void properties() {
+		JDialog dialog = new JDialog();
+		JPanel panel = new JPanel();
+		dialog.setContentPane(panel);
+		panel.setLayout(new BorderLayout());
+		JPanel proppanel = new JPanel();
+		proppanel.setLayout(new GridLayout(0,2));
+		JLabel l = new JLabel("class");
+		JTextField t = new JTextField(this.clazz.getName());
+		proppanel.add(l);proppanel.add(t);
+		panel.add(proppanel, BorderLayout.CENTER);
+		JButton saveb = new JButton("save");
+		saveb.addActionListener(a->{
+			try {
+				Class<?>c = Class.forName(t.getText());
+				this.setClazz(c);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			dialog.setVisible(false);
+			diagram.repaint();
+		});
+		panel.add(saveb, BorderLayout.PAGE_END);
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
+	}
 	@Override
 	public void draw(Graphics2D g2) {
 		shape.draw(g2);

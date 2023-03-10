@@ -1,0 +1,33 @@
+[{
+    "init": "INTERACTIONLIST",
+    "filename": "resources/interact.sklt",
+    "inputs": [],
+    "root": {
+        "blocks": [{
+            "children": [
+                {
+                    "blocks": [{"type": "GhostBlock"}],
+                    "rule": "INTERACTION",
+                    "type": "RecursiveBlock"
+                },
+                {
+                    "blocks": [{"type": "GhostBlock"}],
+                    "rule": "INTERACTIONLIST",
+                    "type": "RecursiveBlock"
+                }
+            ],
+            "type": "ChildrenBlock"
+        }],
+        "rule": "INTERACTIONLIST",
+        "type": "RecursiveBlock"
+    },
+    "decisions": [
+        0,
+        -1,
+        -1
+    ],
+    "base": {
+        "x": 557,
+        "y": 179
+    }
+}]
