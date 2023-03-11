@@ -114,4 +114,10 @@ public class PendingElement extends Element {
 		this.father = father;
 	}
 
+	@Override
+	protected void properties() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -12,11 +12,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import block_manipulation.Vector2D;
+import block_manipulation.block.BlockManager;
 import diagram.CodePanel;
 import diagram.Diagram;
+import diagram.translation.UpdatesTranslation;
 import setup.gui.block.BlockConstructionLauncher;
  
 public class EntityElement extends Element {
@@ -25,7 +29,7 @@ public class EntityElement extends Element {
 	public EntityElement(Point point) {
 		super(point);
 		this.shape = new EntityShape(25,25);
-		this.blockLauncher = new BlockConstructionLauncher("resources/interact.sklt");
+		this.blockLauncher = new BlockConstructionLauncher("resources/updates.sklt");
 	}
 	@Override
 	public String fileName() {
@@ -34,7 +38,26 @@ public class EntityElement extends Element {
 	
 	@Override
 	public void write(CodePanel panel) {
-		panel.insertString(clazz.getName()+'\n');
+		panel.insertString("init := \n");
+		for(JSONObject o:this.blocks) {
+			if(o.getString("init").equals("INIT_DEF")) {
+				panel.insertString("initImc"+"(\""+clazz.getName()+"\"){\n");
+				String s = UpdatesTranslation.translate(o.getJSONObject("root"));
+				panel.insertString(s+'\n');
+				panel.insertString("}\n");
+			}
+		}
+		panel.insertString(".\n");
+		panel.insertString("updates := \n");
+		for(JSONObject o:this.blocks) {
+			if(o.getString("init").equals("UPDATE_DEF")) {
+				panel.insertString("update"+"(\""+clazz.getName()+"\"){\n");
+				String s = UpdatesTranslation.translate(o.getJSONObject("root"));
+				panel.insertString(s+'\n');
+				panel.insertString("}\n");
+			}
+		}
+		panel.insertString(".\n");
 	}
 
 
@@ -47,13 +70,31 @@ public class EntityElement extends Element {
 		} catch (ClassNotFoundException | JSONException e1) {
 			e1.printStackTrace();
 		}
+		JSONArray arr = ob.getJSONArray("managers");
+		e.blockLauncher.getEditor().loadBlocks(arr);
+		for(int i=0;i<e.blockLauncher.getEditor().getManagers().size();i++) {
+			BlockManager m = e.blockLauncher.getEditor().getManagers().get(i);
+			m.setBase(new Vector2D(arr.getJSONObject(i).getJSONObject("base").getInt("x"),arr.getJSONObject(i).getJSONObject("base").getInt("y")));
+			m.buildBlocks(e.blockLauncher.getEditor().getInitSymbols().get(i));
+		}
+		for(int i=0;i<arr.length();i++) {
+			JSONObject o = arr.getJSONObject(i);
+			e.blocks.add(o);
+		}
 		return e;
 	}
 	@Override
 	public JSONObject toJSON() {
+		JSONArray arr = new JSONArray();
+		for(BlockManager m:this.blockLauncher.getEditor().getManagers()) {
+			if(m.isComplete())arr.put(m.toJSON());
+			//arr.put(m.toJSON());
+		}
 		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
 							   .put("clazz", clazz.getName())
-							   .put("type", "Entity");
+							   .put("type", "Entity")
+							   .put("managers", arr)
+							   .put("blocks", new JSONArray(this.blocks));
 	}
 	@Override
 	protected void properties() {

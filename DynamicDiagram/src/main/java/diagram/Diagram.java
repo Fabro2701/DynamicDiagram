@@ -78,11 +78,25 @@ public class Diagram extends JPanel{
 	 }
 	 public void compile() {
 		 this.codePanel.clear();
-		 //group by?
-		 //Map<Object, List<Element>> gs = elements.stream().collect(Collectors.groupingBy(e->e.getClass()));
-		 for(Element e:elements) {
-			 e.write(this.codePanel);
+	
+		 Map<Object, List<Element>> gs = elements.stream().collect(Collectors.groupingBy(e->e.getClass()));
+		 if(gs.containsKey(GlobalElement.class)) {
+			 codePanel.insertString("global := \n");
+			 for(Element e:gs.get(GlobalElement.class)) {
+				 e.write(this.codePanel);
+			 }
+			 codePanel.insertString(".\n");
 		 }
+		 if(gs.containsKey(EntityElement.class)) {
+			 
+			 for(Element e:gs.get(EntityElement.class)) {
+				 e.write(this.codePanel);
+			 }
+		 }
+		 /*for(Element e:elements) {
+			 e.write(this.codePanel);
+		 }*/
+		 codePanel.stylize();
 	 }
 	 public void insertElement(Element element) {
 		 insertElement(element,  null,false);
@@ -212,19 +226,15 @@ public class Diagram extends JPanel{
 			switch(type) {
 			case "Entity":
 				e = EntityElement.fromJSON(this, ob);
-				e.load();
 				break;
 			case "Global":
 				e = GlobalElement.fromJSON(this, ob);
-				e.load();
 				break;
 			case "Group":
 				e = GroupElement.fromJSON(this, ob);
-				e.load();
 				break;
 			case "Interaction":
 				e = InteractionElement.fromJSON(this, ob);
-				e.load();
 				break;
 			}
 			elements.add(e);

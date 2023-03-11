@@ -1,0 +1,11 @@
+<UPDATE_DEF> :- [
+ 		   Header(name=Str(text="Update def")),
+ 		   Children(e=<CODE>),
+ 		   Floor()
+		  ].
+<INIT_DEF> :- [
+ 		   Header(name=Str(text="Init def")),
+ 		   Children(e=<CODE>),
+ 		   Floor()
+		  ].
+<CODE> :- [Input(text="code")].

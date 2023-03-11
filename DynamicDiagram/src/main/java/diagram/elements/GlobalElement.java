@@ -12,10 +12,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import block_manipulation.Vector2D;
+import block_manipulation.block.BlockManager;
 import diagram.CodePanel;
 import diagram.Diagram;
+import diagram.translation.GlobalTranslation;
 import setup.gui.block.BlockConstructionLauncher;
  
 public class GlobalElement extends Element {
@@ -33,7 +37,12 @@ public class GlobalElement extends Element {
 	
 	@Override
 	public void write(CodePanel panel) {
-		panel.insertString("");
+		panel.insertString(id+"(){\n");
+		for(JSONObject o:this.blocks) {
+			String s = GlobalTranslation.translate(o.getJSONObject("root"));
+			panel.insertString(s+'\n');
+		}
+		panel.insertString("}\n");
 	}
 
 	public static GlobalElement fromJSON(Diagram diagram, JSONObject ob) {
@@ -41,14 +50,32 @@ public class GlobalElement extends Element {
 		GlobalElement e = new GlobalElement(new Point(pos.getInt("x"),pos.getInt("y")));
 		e.setDiagram(diagram);
 		e.setId(ob.getString("id"));
+		JSONArray arr = ob.getJSONArray("managers");
+		e.blockLauncher.getEditor().loadBlocks(arr);
+		for(int i=0;i<e.blockLauncher.getEditor().getManagers().size();i++) {
+			BlockManager m = e.blockLauncher.getEditor().getManagers().get(i);
+			m.setBase(new Vector2D(arr.getJSONObject(i).getJSONObject("base").getInt("x"),arr.getJSONObject(i).getJSONObject("base").getInt("y")));
+			m.buildBlocks(e.blockLauncher.getEditor().getInitSymbols().get(i));
+		}
+		for(int i=0;i<arr.length();i++) {
+			JSONObject o = arr.getJSONObject(i);
+			e.blocks.add(o);
+		}
 		return e;
 	}
 
 	@Override
 	public JSONObject toJSON() {
+		JSONArray arr = new JSONArray();
+		for(BlockManager m:this.blockLauncher.getEditor().getManagers()) {
+			if(m.isComplete())arr.put(m.toJSON());
+			//arr.put(m.toJSON());
+		}
 		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
 							   .put("id", id)
-							   .put("type", "Global");
+							   .put("type", "Global")
+							   .put("managers", arr)
+							   .put("blocks", new JSONArray(this.blocks));
 	}
 	@Override
 	protected void properties() {

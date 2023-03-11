@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -18,7 +19,6 @@ import javax.swing.JPopupMenu;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 import org.json.JSONTokener;
 
 import block_manipulation.block.BlockManager;
@@ -39,6 +39,8 @@ public abstract class Element implements Cloneable{
 	
 	BlockConstructionLauncher blockLauncher;
 	
+	List<JSONObject>blocks;
+	
 	public Element(Point point) {
 		this.pos = point;
 		this.editMenu = new JMenuItem("edit");
@@ -49,11 +51,13 @@ public abstract class Element implements Cloneable{
 		this.deleteMenu.addActionListener((a)->{Element.this.delete();});
 		this.propertiesMenu = new JMenuItem("properties");
 		this.propertiesMenu.addActionListener((a)->{Element.this.properties();});
+		
+		blocks = new ArrayList<>();
 	}
 	protected abstract void properties();
 	public abstract void write(CodePanel panel);
-	public final void load() {
-		String filename = "resources/"+this.fileName()+".json";
+	/*public final void load() {
+		String filename = "resources/"+directory+this.fileName()+".json";
 		JSONArray arr = null;
 		try {
 			arr = new JSONArray(new JSONTokener(new FileInputStream(filename)));
@@ -64,18 +68,17 @@ public abstract class Element implements Cloneable{
 			e.printStackTrace();
 		}
 		this.blockLauncher.getEditor().loadBlocks(arr);
-	}
-	public final void save(String filename) {
+		
+		for(int i=0;i<arr.length();i++) {
+			blocks.add(arr.getJSONObject(i).getJSONObject("root"));
+		}
+	}*/
+	public final void save() {
+		blocks.clear();
 		List<BlockManager> mgs = blockLauncher.getEditor().getManagers();
-		JSONArray arr = new JSONArray();
-		for(BlockManager m:mgs)arr.put(m.toJSON());
-		try {
-	         FileWriter file = new FileWriter("resources/"+Element.directory +filename+".json");
-	         file.write(arr.toString(4));
-	         file.close();
-	      } catch (IOException e) {
-	         e.printStackTrace();
-	      }
+		for(BlockManager m:mgs) {
+			if(m.isComplete())blocks.add(m.toJSON());			
+		}
 	}
 	public abstract String fileName();
 	public abstract void draw(Graphics2D g2);
@@ -87,7 +90,7 @@ public abstract class Element implements Cloneable{
 		dialog.setContentPane(p);
 		p.add(this.blockLauncher, BorderLayout.CENTER);
 		JButton b = new JButton("save");
-		b.addActionListener((a)->save(this.fileName()));
+		b.addActionListener((a)->save());
 		p.add(b, BorderLayout.PAGE_END);
 		dialog.pack();
 		dialog.setVisible(true);

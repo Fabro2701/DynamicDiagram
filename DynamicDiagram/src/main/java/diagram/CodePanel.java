@@ -23,4 +23,19 @@ public class CodePanel extends JTextPane{
 	public void clear() {
 		this.setText("");
 	}
+	public void stylize() {
+		String s = this.getText();
+		String lines[] = s.split(System.lineSeparator());
+		StringBuilder sb = new StringBuilder();
+		
+		int tab=0;
+		for(String line:lines) {
+			if(line.contains("}"))tab--;
+			for(int i=0;i<tab;i++)sb.append("\t");
+			sb.append(line).append('\n');
+			if(line.contains("{"))tab++;
+		}
+		
+		this.setText(sb.toString());
+	}
 }
