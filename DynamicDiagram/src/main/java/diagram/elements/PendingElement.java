@@ -34,10 +34,7 @@ public class PendingElement extends Element {
 		f.accept(father, e);
 		//this.setConnection(e.getPos());
 	}
-	@Override
-	public void write(CodePanel panel) {
-		// TODO Auto-generated method stub
-	}
+
 
 
 	@Override

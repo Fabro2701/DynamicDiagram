@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +37,9 @@ import diagram.elements.GlobalElement;
 import diagram.elements.GroupElement;
 import diagram.elements.InteractionElement;
 import diagram.elements.PendingElement;
+import diagram.translation.GlobalTranslation;
+import diagram.translation.InteractionsTranslation;
+import diagram.translation.UpdatesTranslation;
 
 public class Diagram extends JPanel{
 	 private ToolBar toolBar;
@@ -78,8 +82,43 @@ public class Diagram extends JPanel{
 	 }
 	 public void compile() {
 		 this.codePanel.clear();
-	
-		 Map<Object, List<Element>> gs = elements.stream().collect(Collectors.groupingBy(e->e.getClass()));
+		 Map<String, List<Pair<Element,JSONObject>>> os = new HashMap<>();
+		 for(Element e:elements) {
+			 os.putAll(e.getBlocks());
+		 }
+		 if(os.containsKey("GLOBAL_DEF")) {
+			 codePanel.insertString("global :=\n");
+			 for(Pair<Element,JSONObject>p:os.get("GLOBAL_DEF")) {
+				 String s = GlobalTranslation.translate((GlobalElement) p.first, p.second.getJSONObject("root"));
+				 codePanel.insertString(s);
+				 codePanel.insertString("\n");
+			 }
+		 }
+		 if(os.containsKey("INIT_DEF")) {
+			 codePanel.insertString("init :=\n");
+			 for(Pair<Element,JSONObject>p:os.get("INIT_DEF")) {
+				 String s = UpdatesTranslation.translate((EntityElement) p.first,p.second.getJSONObject("root"));
+				 codePanel.insertString(s);
+				 codePanel.insertString("\n");
+			 }
+		 }
+		 if(os.containsKey("UPDATE_DEF")) {
+			 codePanel.insertString("updates :=\n");
+			 for(Pair<Element,JSONObject>p:os.get("UPDATE_DEF")) {
+				 String s = UpdatesTranslation.translate((EntityElement) p.first,p.second.getJSONObject("root"));
+				 codePanel.insertString(s);
+				 codePanel.insertString("\n");
+			 }
+		 }
+		 if(os.containsKey("INTERACTION_DEF")) {
+			 codePanel.insertString("interactions :=\n");
+			 for(Pair<Element,JSONObject>p:os.get("INTERACTION_DEF")) {
+				 String s = InteractionsTranslation.translate((InteractionElement) p.first,p.second.getJSONObject("root"));
+				 codePanel.insertString(s);
+				 codePanel.insertString("\n");
+			 }
+		 }
+		 /*Map<Object, List<Element>> gs = elements.stream().collect(Collectors.groupingBy(e->e.getClass()));
 		 if(gs.containsKey(GlobalElement.class)) {
 			 codePanel.insertString("global := \n");
 			 for(Element e:gs.get(GlobalElement.class)) {
@@ -92,7 +131,7 @@ public class Diagram extends JPanel{
 			 for(Element e:gs.get(EntityElement.class)) {
 				 e.write(this.codePanel);
 			 }
-		 }
+		 }*/
 		 /*for(Element e:elements) {
 			 e.write(this.codePanel);
 		 }*/

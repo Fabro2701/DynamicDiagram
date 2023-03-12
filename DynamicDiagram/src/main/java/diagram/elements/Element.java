@@ -3,12 +3,12 @@ package diagram.elements;
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -16,14 +16,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import block_manipulation.block.BlockManager;
-import diagram.CodePanel;
 import diagram.Diagram;
+import diagram.Pair;
 import setup.gui.block.BlockConstructionLauncher;
 
 public abstract class Element implements Cloneable{
@@ -55,7 +52,16 @@ public abstract class Element implements Cloneable{
 		blocks = new ArrayList<>();
 	}
 	protected abstract void properties();
-	public abstract void write(CodePanel panel);
+	public Map<String, List<Pair<Element,JSONObject>>> getBlocks(){
+		Map<String, List<JSONObject>> bs = this.blocks.stream().filter((JSONObject ob)->ob.getBoolean("complete")).collect(Collectors.groupingBy((JSONObject ob)->ob.getString("init")));
+		 Map<String, List<Pair<Element,JSONObject>>> m = new HashMap<>();
+		 for(Entry<String,List<JSONObject>>entry:bs.entrySet()) {
+			 for(JSONObject o:entry.getValue()) {
+				 m.computeIfAbsent(entry.getKey(), s->new ArrayList<>()).add(new Pair<Element,JSONObject>(this, o));
+			 }
+		 }
+		 return m;
+	}
 	/*public final void load() {
 		String filename = "resources/"+directory+this.fileName()+".json";
 		JSONArray arr = null;

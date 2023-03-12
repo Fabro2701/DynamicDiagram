@@ -14,10 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import block_manipulation.Vector2D;
+import block_manipulation.block.BlockManager;
 import diagram.CodePanel;
 import diagram.Diagram;
+import setup.gui.block.BlockConstructionLauncher;
 
 public class GroupElement extends Element {
 	String att;
@@ -26,16 +30,13 @@ public class GroupElement extends Element {
 	public GroupElement(Point point) {
 		super(point);
 		this.shape = new GroupShape(25,25);
+		this.blockLauncher = new BlockConstructionLauncher("resources/interact.sklt");
 	}
 	@Override
 	public String fileName() {
 		return att+value+father.fileName();
 	}
-	@Override
-	public void write(CodePanel panel) {
-		// TODO Auto-generated method stub
 
-	}
 	public static GroupElement fromJSON(Diagram diagram, JSONObject ob) {
 		JSONObject pos = ob.getJSONObject("pos");
 		GroupElement e = new GroupElement(new Point(pos.getInt("x"),pos.getInt("y")));
@@ -48,6 +49,17 @@ public class GroupElement extends Element {
 		}
 		else {
 			e.setFather(e.createPendingChild());
+		}
+		JSONArray arr = ob.getJSONArray("managers");
+		e.blockLauncher.getEditor().loadBlocks(arr);
+		for(int i=0;i<e.blockLauncher.getEditor().getManagers().size();i++) {
+			BlockManager m = e.blockLauncher.getEditor().getManagers().get(i);
+			m.setBase(new Vector2D(arr.getJSONObject(i).getJSONObject("base").getInt("x"),arr.getJSONObject(i).getJSONObject("base").getInt("y")));
+			m.buildBlocks(e.blockLauncher.getEditor().getInitSymbols().get(i));
+		}
+		for(int i=0;i<arr.length();i++) {
+			JSONObject o = arr.getJSONObject(i);
+			e.blocks.add(o);
 		}
 		return e;
 	}
@@ -72,7 +84,7 @@ public class GroupElement extends Element {
 		JButton saveb = new JButton("save");
 		saveb.addActionListener(a->{
 			this.setAtt(t.getText());
-			this.setAtt(t2.getText());
+			this.setValue(t2.getText());
 			if(t3.getText().equals(""))this.setFather(this.createPendingChild());
 			else {
 				Element e = null;
@@ -90,11 +102,17 @@ public class GroupElement extends Element {
 	}
 	@Override
 	public JSONObject toJSON() {
+		JSONArray arr = new JSONArray();
+		for(BlockManager m:this.blockLauncher.getEditor().getManagers()) {
+			if(m.isComplete())arr.put(m.toJSON());
+		}
 		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
 							   .put("att", att)
 							   .put("value", value)
 							   .put("father", father instanceof PendingElement?null:father.fileName())
-							   .put("type", "Group");
+							   .put("type", "Group")
+							   .put("managers", arr)
+							   .put("blocks", new JSONArray(this.blocks));
 	}
 	public PendingElement createPendingChild() {
 		PendingElement pe = new PendingElement(this.getShape().leftPoint());

@@ -5,6 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -35,9 +38,10 @@ public class EntityElement extends Element {
 	public String fileName() {
 		return clazz.getSimpleName();
 	}
-	
-	@Override
-	public void write(CodePanel panel) {
+
+
+	/*@Override
+	public List<JSONObject> getBlocks() {
 		panel.insertString("init := \n");
 		for(JSONObject o:this.blocks) {
 			if(o.getString("init").equals("INIT_DEF")) {
@@ -58,7 +62,7 @@ public class EntityElement extends Element {
 			}
 		}
 		panel.insertString(".\n");
-	}
+	}*/
 
 
 	public static EntityElement fromJSON(Diagram diagram, JSONObject ob) {

@@ -13,8 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import block_manipulation.Vector2D;
+import block_manipulation.block.BlockManager;
 import diagram.CodePanel;
 import diagram.Diagram;
 import setup.gui.block.BlockConstructionLauncher;
@@ -50,15 +53,32 @@ public class InteractionElement extends Element {
 		else {
 			e.setTo(e.createPendingToChild());
 		}
+		JSONArray arr = ob.getJSONArray("managers");
+		e.blockLauncher.getEditor().loadBlocks(arr);
+		for(int i=0;i<e.blockLauncher.getEditor().getManagers().size();i++) {
+			BlockManager m = e.blockLauncher.getEditor().getManagers().get(i);
+			m.setBase(new Vector2D(arr.getJSONObject(i).getJSONObject("base").getInt("x"),arr.getJSONObject(i).getJSONObject("base").getInt("y")));
+			m.buildBlocks(e.blockLauncher.getEditor().getInitSymbols().get(i));
+		}
+		for(int i=0;i<arr.length();i++) {
+			JSONObject o = arr.getJSONObject(i);
+			e.blocks.add(o);
+		}
 		return e;
 	}
 	@Override
 	public JSONObject toJSON() {
+		JSONArray arr = new JSONArray();
+		for(BlockManager m:this.blockLauncher.getEditor().getManagers()) {
+			if(m.isComplete())arr.put(m.toJSON());
+		}
 		return new JSONObject().put("pos", new JSONObject().put("x",pos.x).put("y", pos.y))
 							   .put("id", id)
 							   .put("from", from instanceof PendingElement?null:from.fileName())
 							   .put("to", to instanceof PendingElement?null:to.fileName())
-							   .put("type", "Interaction");
+							   .put("type", "Interaction")
+							   .put("managers", arr)
+							   .put("blocks", new JSONArray(this.blocks));
 	}
 	@Override
 	public void draw(Graphics2D g2) {
@@ -215,10 +235,7 @@ public class InteractionElement extends Element {
 		pe.setF((Element father, Element connection)->((InteractionElement)father).setTo(connection));
 		return pe;
 	}
-	@Override
-	public void write(CodePanel panel) {
-		panel.insertString(this.id+'\n');
-	}
+
 	public String getId() {
 		return id;
 	}

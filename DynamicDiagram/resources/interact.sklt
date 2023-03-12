@@ -1,11 +1,4 @@
 <INTERACTION_DEF> :- [
- 		   Header(name=Str(text="Interaction def"),right=<NAME>,right=<NAME>),
- 		   Children(e=<INTERACTIONLIST>),
- 		   Floor()
-		  ].
-<INTERACTIONLIST>:-[Children(e=<INTERACTION>,e=<INTERACTIONLIST>)],
-			     [Children(e=<INTERACTION>), Floor()].
-<INTERACTION> :- [
  		   Header(name=Str(text="Interaction def"),right=<NAME>),
  		   Children(e=<CODE>),
  		   Floor()
