@@ -30,7 +30,7 @@ public class GroupElement extends Element {
 	public GroupElement(Point point) {
 		super(point);
 		this.shape = new GroupShape(25,25);
-		this.blockLauncher = new BlockConstructionLauncher("resources/interact.sklt");
+		this.blockLauncher = new BlockConstructionLauncher("resources/updates.sklt");
 	}
 	@Override
 	public String fileName() {

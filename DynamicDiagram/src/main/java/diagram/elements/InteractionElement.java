@@ -148,7 +148,7 @@ public class InteractionElement extends Element {
 			if(t2.getText().equals(""))this.setFrom(this.createPendingFromChild());
 			else {
 				Element e = null;
-				if((e=diagram.findElement(t3.getText()))!=null) {
+				if((e=diagram.findElement(t2.getText()))!=null) {
 					this.setFrom(diagram.findElement(t2.getText()));
 				}
 			}

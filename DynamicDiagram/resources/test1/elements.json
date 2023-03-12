@@ -1,16 +1,46 @@
-[{
-    "pos": {
-        "x": 340,
-        "y": 160
+[
+    {
+        "pos": {
+            "x": 129,
+            "y": 52
+        },
+        "blocks": [],
+        "type": "Entity",
+        "clazz": "diagram.elements.EntityElement",
+        "managers": []
     },
-    "blocks": [
-        {
+    {
+        "pos": {
+            "x": 332,
+            "y": 45
+        },
+        "blocks": [],
+        "type": "Entity",
+        "clazz": "diagram.elements.GroupElement",
+        "managers": []
+    },
+    {
+        "att": "att",
+        "pos": {
+            "x": 210,
+            "y": 146
+        },
+        "blocks": [],
+        "father": "EntityElement",
+        "type": "Group",
+        "value": "value",
+        "managers": []
+    },
+    {
+        "att": "att2",
+        "pos": {
+            "x": 431,
+            "y": 143
+        },
+        "blocks": [{
             "init": "UPDATE_DEF",
             "filename": "resources/updates.sklt",
-            "inputs": [{
-                "pos": 1,
-                "text": "codeh\ngfh\nfg\ndfgh"
-            }],
+            "inputs": [],
             "root": {
                 "blocks": [
                     {
@@ -18,13 +48,20 @@
                             "text": "Update def",
                             "type": "StrBlock"
                         },
-                        "right": [],
+                        "right": [{
+                            "blocks": [{
+                                "text": "id",
+                                "type": "InputBlock"
+                            }],
+                            "rule": "NAME",
+                            "type": "RecursiveBlock"
+                        }],
                         "type": "HeaderBlock"
                     },
                     {
                         "children": [{
                             "blocks": [{
-                                "text": "codeh\ngfh\nfg\ndfgh",
+                                "text": "code",
                                 "type": "InputBlock"
                             }],
                             "rule": "CODE",
@@ -39,26 +76,143 @@
             },
             "decisions": [
                 0,
+                0,
                 0
             ],
             "complete": true,
             "base": {
-                "x": 606,
+                "x": 588,
+                "y": 149
+            }
+        }],
+        "father": "GroupElement",
+        "type": "Group",
+        "value": "value2",
+        "managers": [{
+            "init": "UPDATE_DEF",
+            "filename": "resources/updates.sklt",
+            "inputs": [],
+            "root": {
+                "blocks": [
+                    {
+                        "name": {
+                            "text": "Update def",
+                            "type": "StrBlock"
+                        },
+                        "right": [{
+                            "blocks": [{
+                                "text": "id",
+                                "type": "InputBlock"
+                            }],
+                            "rule": "NAME",
+                            "type": "RecursiveBlock"
+                        }],
+                        "type": "HeaderBlock"
+                    },
+                    {
+                        "children": [{
+                            "blocks": [{
+                                "text": "code",
+                                "type": "InputBlock"
+                            }],
+                            "rule": "CODE",
+                            "type": "RecursiveBlock"
+                        }],
+                        "type": "ChildrenBlock"
+                    },
+                    {"type": "FloorBlock"}
+                ],
+                "rule": "UPDATE_DEF",
+                "type": "RecursiveBlock"
+            },
+            "decisions": [
+                0,
+                0,
+                0
+            ],
+            "complete": true,
+            "base": {
+                "x": 588,
+                "y": 149
+            }
+        }]
+    },
+    {
+        "pos": {
+            "x": 300,
+            "y": 149
+        },
+        "blocks": [{
+            "init": "INTERACTION_DEF",
+            "filename": "resources/interact.sklt",
+            "inputs": [],
+            "root": {
+                "blocks": [
+                    {
+                        "name": {
+                            "text": "Interaction def",
+                            "type": "StrBlock"
+                        },
+                        "right": [{
+                            "blocks": [{
+                                "text": "id",
+                                "type": "InputBlock"
+                            }],
+                            "rule": "NAME",
+                            "type": "RecursiveBlock"
+                        }],
+                        "type": "HeaderBlock"
+                    },
+                    {
+                        "children": [{
+                            "blocks": [{
+                                "text": "code",
+                                "type": "InputBlock"
+                            }],
+                            "rule": "CODE",
+                            "type": "RecursiveBlock"
+                        }],
+                        "type": "ChildrenBlock"
+                    },
+                    {"type": "FloorBlock"}
+                ],
+                "rule": "INTERACTION_DEF",
+                "type": "RecursiveBlock"
+            },
+            "decisions": [
+                0,
+                0,
+                0
+            ],
+            "complete": true,
+            "base": {
+                "x": 649,
                 "y": 98
             }
-        },
-        {
-            "init": "UPDATE_DEF",
-            "filename": "resources/updates.sklt",
+        }],
+        "from": "attvalueEntityElement",
+        "id": "int",
+        "to": "att2value2GroupElement",
+        "type": "Interaction",
+        "managers": [{
+            "init": "INTERACTION_DEF",
+            "filename": "resources/interact.sklt",
             "inputs": [],
             "root": {
                 "blocks": [
                     {
                         "name": {
-                            "text": "Update def",
+                            "text": "Interaction def",
                             "type": "StrBlock"
                         },
-                        "right": [],
+                        "right": [{
+                            "blocks": [{
+                                "text": "id",
+                                "type": "InputBlock"
+                            }],
+                            "rule": "NAME",
+                            "type": "RecursiveBlock"
+                        }],
                         "type": "HeaderBlock"
                     },
                     {
@@ -74,185 +228,19 @@
                     },
                     {"type": "FloorBlock"}
                 ],
-                "rule": "UPDATE_DEF",
+                "rule": "INTERACTION_DEF",
                 "type": "RecursiveBlock"
             },
             "decisions": [
+                0,
                 0,
                 0
             ],
             "complete": true,
             "base": {
-                "x": 698,
-                "y": 263
-            }
-        },
-        {
-            "init": "INIT_DEF",
-            "filename": "resources/updates.sklt",
-            "inputs": [],
-            "root": {
-                "blocks": [
-                    {
-                        "name": {
-                            "text": "Init def",
-                            "type": "StrBlock"
-                        },
-                        "right": [],
-                        "type": "HeaderBlock"
-                    },
-                    {
-                        "children": [{
-                            "blocks": [{
-                                "text": "code",
-                                "type": "InputBlock"
-                            }],
-                            "rule": "CODE",
-                            "type": "RecursiveBlock"
-                        }],
-                        "type": "ChildrenBlock"
-                    },
-                    {"type": "FloorBlock"}
-                ],
-                "rule": "INIT_DEF",
-                "type": "RecursiveBlock"
-            },
-            "decisions": [
-                0,
-                0
-            ],
-            "complete": true,
-            "base": {
-                "x": 675,
-                "y": 178
-            }
-        }
-    ],
-    "type": "Entity",
-    "clazz": "diagram.elements.EntityElement",
-    "managers": [
-        {
-            "init": "UPDATE_DEF",
-            "filename": "resources/updates.sklt",
-            "inputs": [{
-                "pos": 1,
-                "text": "codeh\ngfh\nfg\ndfgh"
-            }],
-            "root": {
-                "blocks": [
-                    {
-                        "name": {
-                            "text": "Update def",
-                            "type": "StrBlock"
-                        },
-                        "right": [],
-                        "type": "HeaderBlock"
-                    },
-                    {
-                        "children": [{
-                            "blocks": [{
-                                "text": "codeh\ngfh\nfg\ndfgh",
-                                "type": "InputBlock"
-                            }],
-                            "rule": "CODE",
-                            "type": "RecursiveBlock"
-                        }],
-                        "type": "ChildrenBlock"
-                    },
-                    {"type": "FloorBlock"}
-                ],
-                "rule": "UPDATE_DEF",
-                "type": "RecursiveBlock"
-            },
-            "decisions": [
-                0,
-                0
-            ],
-            "complete": true,
-            "base": {
-                "x": 606,
+                "x": 649,
                 "y": 98
             }
-        },
-        {
-            "init": "UPDATE_DEF",
-            "filename": "resources/updates.sklt",
-            "inputs": [],
-            "root": {
-                "blocks": [
-                    {
-                        "name": {
-                            "text": "Update def",
-                            "type": "StrBlock"
-                        },
-                        "right": [],
-                        "type": "HeaderBlock"
-                    },
-                    {
-                        "children": [{
-                            "blocks": [{
-                                "text": "code",
-                                "type": "InputBlock"
-                            }],
-                            "rule": "CODE",
-                            "type": "RecursiveBlock"
-                        }],
-                        "type": "ChildrenBlock"
-                    },
-                    {"type": "FloorBlock"}
-                ],
-                "rule": "UPDATE_DEF",
-                "type": "RecursiveBlock"
-            },
-            "decisions": [
-                0,
-                0
-            ],
-            "complete": true,
-            "base": {
-                "x": 698,
-                "y": 263
-            }
-        },
-        {
-            "init": "INIT_DEF",
-            "filename": "resources/updates.sklt",
-            "inputs": [],
-            "root": {
-                "blocks": [
-                    {
-                        "name": {
-                            "text": "Init def",
-                            "type": "StrBlock"
-                        },
-                        "right": [],
-                        "type": "HeaderBlock"
-                    },
-                    {
-                        "children": [{
-                            "blocks": [{
-                                "text": "code",
-                                "type": "InputBlock"
-                            }],
-                            "rule": "CODE",
-                            "type": "RecursiveBlock"
-                        }],
-                        "type": "ChildrenBlock"
-                    },
-                    {"type": "FloorBlock"}
-                ],
-                "rule": "INIT_DEF",
-                "type": "RecursiveBlock"
-            },
-            "decisions": [
-                0,
-                0
-            ],
-            "complete": true,
-            "base": {
-                "x": 675,
-                "y": 178
-            }
-        }
-    ]
-}]
+        }]
+    }
+]

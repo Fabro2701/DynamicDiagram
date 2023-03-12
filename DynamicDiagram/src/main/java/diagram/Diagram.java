@@ -105,7 +105,7 @@ public class Diagram extends JPanel{
 		 if(os.containsKey("UPDATE_DEF")) {
 			 codePanel.insertString("updates :=\n");
 			 for(Pair<Element,JSONObject>p:os.get("UPDATE_DEF")) {
-				 String s = UpdatesTranslation.translate((EntityElement) p.first,p.second.getJSONObject("root"));
+				 String s = UpdatesTranslation.translate(p.first,p.second.getJSONObject("root"));
 				 codePanel.insertString(s);
 				 codePanel.insertString("\n");
 			 }
