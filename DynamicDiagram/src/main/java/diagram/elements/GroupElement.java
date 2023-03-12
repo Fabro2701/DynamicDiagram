@@ -142,7 +142,6 @@ public class GroupElement extends Element {
 	@Override
 	public Element contains(Point point) {
 		if(father instanceof PendingElement && father.contains(point)!=null) {
-			System.out.println("ee");
 			return father;
 		}
 		else return this.shape.contains(point)?this:null;

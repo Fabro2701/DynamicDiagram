@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
@@ -84,8 +85,11 @@ public class Diagram extends JPanel{
 		 this.codePanel.clear();
 		 Map<String, List<Pair<Element,JSONObject>>> os = new HashMap<>();
 		 for(Element e:elements) {
-			 os.putAll(e.getBlocks());
+			 for(Entry<String,List<Pair<Element,JSONObject>>>entry:e.getBlocks().entrySet()) {
+				 os.computeIfAbsent(entry.getKey(), s->new ArrayList<>()).addAll(entry.getValue());
+			 }
 		 }
+		 
 		 if(os.containsKey("GLOBAL_DEF")) {
 			 codePanel.insertString("global :=\n");
 			 for(Pair<Element,JSONObject>p:os.get("GLOBAL_DEF")) {
