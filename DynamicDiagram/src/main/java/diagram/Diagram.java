@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import org.json.JSONArray;
@@ -47,6 +49,7 @@ public class Diagram extends JPanel{
 	 List<Element>elements;
 	 CustomMouse mouse;
 	 CodePanel codePanel;
+	 Element eBuffer;
 	 public Diagram(ToolBar toolBar, CodePanel codePanel) {
 		 this.setPreferredSize(new Dimension(800,500));
 		 elements = new ArrayList<>();
@@ -178,11 +181,16 @@ public class Diagram extends JPanel{
 				 
 			 }
 			 else if(SwingUtilities.isRightMouseButton(ev)) {
+				 boolean found = false;
 				 for(Element e:elements) {
 					 if(e.contains(p)!=null) {
 						 e.openMenu(p);
+						 found = true;
 						 break;
 					 }
+				 }
+				 if(!found) {
+					 Diagram.this.openPasteMenu(p);
 				 }
 			 }
 		 }
@@ -251,6 +259,20 @@ public class Diagram extends JPanel{
 		for(Element e:elements)if(e.fileName().equals(name))return e;
 		System.err.println(name+" elem not found");
 		return null;
+	}
+	public void openPasteMenu(Point p) {
+		JPopupMenu pm = new JPopupMenu();
+		JMenuItem mi = new JMenuItem("paste");
+		mi.addActionListener((a)->{if(this.eBuffer!=null) {
+								 	    eBuffer.setPos(p);
+										this.elements.add(eBuffer);
+										eBuffer = null;
+										this.repaint();
+								   }
+		});
+		
+		pm.add(mi);
+		pm.show(this, p.x, p.y);
 	}
 	public void load(String filename) {
 		this.elements = new ArrayList<>();
@@ -325,7 +347,10 @@ public class Diagram extends JPanel{
 		
 		this.repaint();
 	}
-	 public static void main(String args[]) {
+	 public void setEBuffer(Element eBuffer) {
+		this.eBuffer = eBuffer;
+	}
+	public static void main(String args[]) {
 		 SwingUtilities.invokeLater(()->{
 			 JFrame frame = new JFrame();
 			 JPanel panel = new JPanel();

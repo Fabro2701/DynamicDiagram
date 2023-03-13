@@ -42,7 +42,7 @@ public abstract class Element implements Cloneable{
 		this.pos = point;
 		this.editMenu = new JMenuItem("edit");
 		this.editMenu.addActionListener((a)->{Element.this.edit();});
-		this.copyMenu = new JMenuItem("copyMenu");
+		this.copyMenu = new JMenuItem("copy");
 		this.copyMenu.addActionListener((a)->{Element.this.copy();});
 		this.deleteMenu = new JMenuItem("delete");
 		this.deleteMenu.addActionListener((a)->{Element.this.delete();});
@@ -105,7 +105,7 @@ public abstract class Element implements Cloneable{
 		diagram.deleteElement(this);
 	}
 	public void copy() {
-		//this.clone();
+		this.diagram.setEBuffer((Element) this.clone());
 	}
 	public List<PendingElement> getPendingElements(){
 		return List.of();
