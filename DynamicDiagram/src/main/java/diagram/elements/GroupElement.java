@@ -146,11 +146,7 @@ public class GroupElement extends Element {
 		}
 		else return this.shape.contains(point)?this:null;
 	}
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
 
-	}
 
 	@Override
 	public Object clone() {

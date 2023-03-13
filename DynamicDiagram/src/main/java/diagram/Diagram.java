@@ -299,6 +299,32 @@ public class Diagram extends JPanel{
 	         e.printStackTrace();
 	      }
 	}
+	public void deleteElement(Element element) {
+		this.elements.remove(element);
+		
+		//update element references
+		if(element instanceof EntityElement || element instanceof GroupElement) {
+			for(Element e:elements) {
+				if(e instanceof InteractionElement) {
+					InteractionElement ie = (InteractionElement)e;
+					if(ie.getFrom()==element) {
+						ie.setFrom(ie.createPendingFromChild());
+					}
+					else if(ie.getTo()==element) {
+						ie.setTo(ie.createPendingToChild());
+					}
+				}
+				else if(e instanceof GroupElement) {
+					GroupElement ge = (GroupElement)e;
+					if(ge.getFather()==element) {
+						ge.setFather(ge.createPendingChild());
+					}
+				}
+			}
+		}
+		
+		this.repaint();
+	}
 	 public static void main(String args[]) {
 		 SwingUtilities.invokeLater(()->{
 			 JFrame frame = new JFrame();

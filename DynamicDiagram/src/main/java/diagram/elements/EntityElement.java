@@ -136,11 +136,7 @@ public class EntityElement extends Element {
 				pos.y+g2.getFontMetrics().getHeight()/4);
 	}
 
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
 
-	}
 	protected class EntityShape extends Shape{
 		int w,h;
 		Polygon p;//square

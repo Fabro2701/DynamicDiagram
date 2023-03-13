@@ -167,10 +167,7 @@ public class InteractionElement extends Element {
 		dialog.setLocationRelativeTo(null);
 		dialog.setVisible(true);
 	}
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
-	}
+
 	@Override
 	public List<PendingElement> getPendingElements(){
 		List<PendingElement> l = new ArrayList<>();

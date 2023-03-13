@@ -101,9 +101,11 @@ public abstract class Element implements Cloneable{
 		dialog.pack();
 		dialog.setVisible(true);
 	}
-	public abstract void delete();
+	public final void delete() {
+		diagram.deleteElement(this);
+	}
 	public void copy() {
-		this.clone();
+		//this.clone();
 	}
 	public List<PendingElement> getPendingElements(){
 		return List.of();

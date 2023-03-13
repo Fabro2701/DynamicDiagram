@@ -45,11 +45,7 @@ public class PendingElement extends Element {
 		connection = point;
 	}
 
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
 
-	}
 
 	protected class PendingShape extends Shape{
 		int w,h;
