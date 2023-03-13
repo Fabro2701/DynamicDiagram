@@ -51,6 +51,7 @@ public abstract class Element implements Cloneable{
 		
 		blocks = new ArrayList<>();
 	}
+	public abstract JSONObject toJSON();
 	protected abstract void properties();
 	public Map<String, List<Pair<Element,JSONObject>>> getBlocks(){
 		Map<String, List<JSONObject>> bs = this.blocks.stream().filter((JSONObject ob)->ob.getBoolean("complete")).collect(Collectors.groupingBy((JSONObject ob)->ob.getString("init")));
@@ -62,23 +63,6 @@ public abstract class Element implements Cloneable{
 		 }
 		 return m;
 	}
-	/*public final void load() {
-		String filename = "resources/"+directory+this.fileName()+".json";
-		JSONArray arr = null;
-		try {
-			arr = new JSONArray(new JSONTokener(new FileInputStream(filename)));
-		} catch (FileNotFoundException e) {
-			System.out.println(filename+" not available to load");
-			return;
-		}catch (JSONException e) {
-			e.printStackTrace();
-		}
-		this.blockLauncher.getEditor().loadBlocks(arr);
-		
-		for(int i=0;i<arr.length();i++) {
-			blocks.add(arr.getJSONObject(i).getJSONObject("root"));
-		}
-	}*/
 	public final void save() {
 		blocks.clear();
 		List<BlockManager> mgs = blockLauncher.getEditor().getManagers();
@@ -121,7 +105,6 @@ public abstract class Element implements Cloneable{
 		pm.add(propertiesMenu);
 		pm.show(diagram, point.x, point.y);
 	}
-	public abstract JSONObject toJSON();
 	@Override
 	public abstract Object clone();
 	public Element contains(Point point) {

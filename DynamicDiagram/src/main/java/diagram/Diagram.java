@@ -98,7 +98,6 @@ public class Diagram extends JPanel{
 			 for(Pair<Element,JSONObject>p:os.get("GLOBAL_DEF")) {
 				 String s = GlobalTranslation.translate((GlobalElement) p.first, p.second.getJSONObject("root"));
 				 codePanel.insertString(s);
-				 codePanel.insertString("\n");
 			 }
 		 }
 		 if(os.containsKey("INIT_DEF")) {
@@ -106,7 +105,6 @@ public class Diagram extends JPanel{
 			 for(Pair<Element,JSONObject>p:os.get("INIT_DEF")) {
 				 String s = UpdatesTranslation.translate((EntityElement) p.first,p.second.getJSONObject("root"));
 				 codePanel.insertString(s);
-				 codePanel.insertString("\n");
 			 }
 		 }
 		 if(os.containsKey("UPDATE_DEF")) {
@@ -114,7 +112,6 @@ public class Diagram extends JPanel{
 			 for(Pair<Element,JSONObject>p:os.get("UPDATE_DEF")) {
 				 String s = UpdatesTranslation.translate(p.first,p.second.getJSONObject("root"));
 				 codePanel.insertString(s);
-				 codePanel.insertString("\n");
 			 }
 		 }
 		 if(os.containsKey("INTERACTION_DEF")) {
@@ -122,26 +119,8 @@ public class Diagram extends JPanel{
 			 for(Pair<Element,JSONObject>p:os.get("INTERACTION_DEF")) {
 				 String s = InteractionsTranslation.translate((InteractionElement) p.first,p.second.getJSONObject("root"));
 				 codePanel.insertString(s);
-				 codePanel.insertString("\n");
 			 }
 		 }
-		 /*Map<Object, List<Element>> gs = elements.stream().collect(Collectors.groupingBy(e->e.getClass()));
-		 if(gs.containsKey(GlobalElement.class)) {
-			 codePanel.insertString("global := \n");
-			 for(Element e:gs.get(GlobalElement.class)) {
-				 e.write(this.codePanel);
-			 }
-			 codePanel.insertString(".\n");
-		 }
-		 if(gs.containsKey(EntityElement.class)) {
-			 
-			 for(Element e:gs.get(EntityElement.class)) {
-				 e.write(this.codePanel);
-			 }
-		 }*/
-		 /*for(Element e:elements) {
-			 e.write(this.codePanel);
-		 }*/
 		 codePanel.stylize();
 	 }
 	 public void insertElement(Element element) {

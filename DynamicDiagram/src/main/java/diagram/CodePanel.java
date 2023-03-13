@@ -1,5 +1,6 @@
 package diagram;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
@@ -7,8 +8,18 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+
 
 public class CodePanel extends JTextPane{
+	public static Style funcStyle;
+	static {
+		StyleContext sc = StyleContext.getDefaultStyleContext();
+		funcStyle = sc.addStyle("FuncDec", null);
+		StyleConstants.setForeground(funcStyle, Color.black);
+		StyleConstants.setBold(funcStyle, true);
+	}
 	public CodePanel() {
 		 this.setPreferredSize(new Dimension(600,500));
 	}
@@ -25,7 +36,7 @@ public class CodePanel extends JTextPane{
 	}
 	public void stylize() {
 		String s = this.getText();
-		String lines[] = s.split(System.lineSeparator());
+		String lines[] = s.split("\n");
 		StringBuilder sb = new StringBuilder();
 		
 		int tab=0;

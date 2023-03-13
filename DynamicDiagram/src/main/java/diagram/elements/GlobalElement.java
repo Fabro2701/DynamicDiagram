@@ -35,15 +35,6 @@ public class GlobalElement extends Element {
 		return "Global"+id;
 	}
 	
-	/*@Override
-	public void write(CodePanel panel) {
-		panel.insertString(id+"(){\n");
-		for(JSONObject o:this.blocks) {
-			String s = GlobalTranslation.translate(o.getJSONObject("root"));
-			panel.insertString(s+'\n');
-		}
-		panel.insertString("}\n");
-	}*/
 
 	public static GlobalElement fromJSON(Diagram diagram, JSONObject ob) {
 		JSONObject pos = ob.getJSONObject("pos");
